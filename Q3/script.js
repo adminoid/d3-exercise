@@ -71,7 +71,7 @@ const drawChart = (prefix) => {
     yScale.domain([(0), d3.max(all_values)]) // [0, "95775"]
 
 
-    // Lines
+    // Lines with legends
     const linesA = plot.append("g")
       .attr("id", "lines-a");
     for (let j = 0; j < keys.length; j++) {
@@ -89,126 +89,50 @@ const drawChart = (prefix) => {
         .style("stroke", colors[j]) // Color
         .attr('class', 'line') // Assign a class for styling
         .attr('d', line) // Calls the line generator
+
+      const title = keys[j].split('=')[0]
+
+      linesA.append('g')
+        .selectAll('line')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('x', width + 5)
+        .attr('y', function(d){return yScale(d3.max(data_dict[keys[j]]))})
+        .attr('fill', colors[j])
+        .text(title)
     }
 
     //Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
         .tickFormat(d3.timeFormat('%b %y')),
-      yaxis = d3.axisLeft(yScale)
+      yAxis = d3.axisLeft(yScale)
         .ticks(10);
 
     //Append axes
     plot.append('g')
-      .attr('class', 'x axis')
+      .attr('id', 'x-axis-' + prefix)
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
     plot.append('g')
-      .attr('class', 'y axis')
-      .call(yaxis);
-
-
-
-    //Add legends
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width + 5)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Catan=count']))})
-      .attr('fill', colors[0])
-      .text('Catan')
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Dominion=count']))})
-      .attr('fill', colors[1])
-      .text('Dominion')
-
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Codenames=count']))})
-      .attr('fill', colors[2])
-      .text('Codenames')
-
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Terraforming Mars=count']))})
-      .attr('fill', colors[3])
-      .text('Terraforming Mars')
-
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Gloomhaven=count']))})
-      .attr('fill', colors[4])
-      .text('Gloomhaven')
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Magic: The Gathering=count']))})
-      .attr('fill', colors[5])
-      .text('Magic: The Gathering')
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Dixit=count']))})
-      .attr('fill', colors[6])
-      .text('Dixit')
-
-    linesA.append('g')
-      .selectAll('line')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('x', width+10)
-      .attr('y', function(d){return yScale(d3.max(data_dict['Monopoly=count']))})
-      .attr('fill', colors[7])
-      .text('Monopoly')
+      .attr('id', 'y-axis-' + prefix)
+      .call(yAxis);
 
     // Add the text label for axes
-    const xAxisA = plot.append("g")
-      .attr('id', 'x-axis-a')
-
-    xAxisA.append('text')
+    plot.append("g")
+      .attr('id', 'x-axis-title-' + prefix)
+      .append('text')
       .attr("x", width/2)
       .attr('y', height+ 50)
       .attr("text-anchor", "middle")
       .attr("stroke", "black")
-      .text("Month");
+      .text("Month")
 
-    const yAxisA = plot.append("g")
-      .attr('id', 'y-axis-a')
-      .attr("transform", "rotate(-90)");
-
-    yAxisA.append('text')
+    plot.append("g")
+      .attr('id', 'y-axis-title-' + prefix)
+      .attr("transform", "rotate(-90)")
+      .append('text')
       .attr("x", -120)
       .attr("y", 25)
       .attr("dy", "-5.1em")
