@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
   drawChart('a')
+  drawChart('b')
 });
 
 const global_width = 1000,
@@ -20,9 +21,10 @@ const drawChart = (prefix) => {
   //Chart Title
   svg.append('text')
     .attr('id', 'title-' + prefix)
-    .attr("x", width / 2)
+    .attr("x", width / 2.6)
     .attr('y', 25)
-    .attr("stroke", "black")
+    .attr("font-size", "26px")
+    .attr("fill", "#282828")
     .text("Number of Ratings 2016 - 2020");
 
   const plot = svg.append("g")
@@ -57,12 +59,11 @@ const drawChart = (prefix) => {
     for(let i = 0; i < data.length; i++){
       for (let j = 0; j < keys.length; j++){
         all_values.push(data[i][keys[j]])
-        data_dict[keys[j]] = []
-        data_dict[keys[j]].push(data[i][keys[j]])
+        data_dict[keys[j]] = [data[i][keys[j]]]
       }
     }
 
-    //Scales
+    // Scales
     const xScale = d3.scaleTime().range([0, width]),
       yScale = d3.scaleLinear().rangeRound([height, 0]);
 
@@ -70,9 +71,8 @@ const drawChart = (prefix) => {
       return d.date}))
     yScale.domain([(0), d3.max(all_values)]) // [0, "95775"]
 
-
     // Lines with legends
-    const linesA = plot.append("g")
+    const lines = plot.append("g")
       .attr("id", "lines-a");
     for (let j = 0; j < keys.length; j++) {
       const line = d3.line()
@@ -84,7 +84,7 @@ const drawChart = (prefix) => {
         })
         .curve(d3.curveMonotoneX)
 
-      linesA.append('path')
+      lines.append('path')
         .datum(data) // Binds data to the line
         .style("stroke", colors[j]) // Color
         .attr('class', 'line') // Assign a class for styling
@@ -92,54 +92,67 @@ const drawChart = (prefix) => {
 
       const title = keys[j].split('=')[0]
 
-      linesA.append('g')
+      lines.append('g')
         .selectAll('line')
         .data(data)
         .enter()
         .append('text')
         .attr('x', width + 5)
-        .attr('y', function(d){return yScale(d3.max(data_dict[keys[j]]))})
+        .attr('y', _ => yScale(d3.max(data_dict[keys[j]])))
         .attr('fill', colors[j])
         .text(title)
     }
 
     //Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
-        .tickFormat(d3.timeFormat('%b %y')),
-      yAxis = d3.axisLeft(yScale)
-        .ticks(10);
+      .tickFormat(d3.timeFormat('%b %y'))
+    const yAxisBlank = d3.axisLeft(yScale)
+      .ticks(10)
 
-    //Append axes
-    plot.append('g')
+    // Append axes
+    const xAxisContainer = plot.append('g')
       .attr('id', 'x-axis-' + prefix)
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-    plot.append('g')
-      .attr('id', 'y-axis-' + prefix)
-      .call(yAxis);
-
-    // Add the text label for axes
-    plot.append("g")
+    // text label
+    xAxisContainer.append("g")
       .attr('id', 'x-axis-title-' + prefix)
       .append('text')
+      .attr("font-size", "14px")
+      .attr("fill", "#282828")
       .attr("x", width/2)
-      .attr('y', height+ 50)
+      .attr('y', 40)
       .attr("text-anchor", "middle")
-      .attr("stroke", "black")
       .text("Month")
+    xAxisContainer.append('g')
+      .call(xAxis)
 
-    plot.append("g")
+    const yAxisContainer = plot.append('g')
+      .attr('id', 'y-axis-' + prefix)
+    // text label
+    yAxisContainer.append("g")
       .attr('id', 'y-axis-title-' + prefix)
-      .attr("transform", "rotate(-90)")
+      .attr("transform", "rotate(-90) translate(0, -3)")
       .append('text')
+      .attr("font-size", "14px")
+      .attr("fill", "#282828")
       .attr("x", -120)
-      .attr("y", 25)
+      .attr("y", 20)
       .attr("dy", "-5.1em")
       .attr("text-anchor", "end")
-      .attr("stroke", "black")
-      .text("Number of Ratings");
+      .text("Number of Ratings")
+    yAxisContainer
+      .call(yAxisBlank)
+
+    additionalFn(prefix)
 
   })
 
+}
+
+const additionalFn = (prefix) => {
+  switch (prefix) {
+    case 'b':
+      console.log('additional')
+      break
+  }
 }
