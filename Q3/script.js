@@ -103,7 +103,7 @@ const drawChart = (prefix) => {
         .attr('fill', colors[j])
         .text(title)
 
-      if (prefix === 'b') {
+      if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
         const scaled_data = []
         for (let i = 0; i < data.length; i++) {
           if ((i + 1) % 3 === 0) {
