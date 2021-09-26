@@ -52,7 +52,7 @@ const drawChart = (prefix) => {
       data[key] = +d[key]
     })
     return data
-  }).then(function(data){
+  }).then(function(data) {
 
     let data_dict = {};
     const all_values = [];
@@ -73,7 +73,8 @@ const drawChart = (prefix) => {
 
     // Lines with legends
     const lines = plot.append("g")
-      .attr("id", "lines-a");
+      .attr("id", "lines-a")
+
     for (let j = 0; j < keys.length; j++) {
       const line = d3.line()
         .x(function (d) {
@@ -101,6 +102,29 @@ const drawChart = (prefix) => {
         .attr('y', _ => yScale(d3.max(data_dict[keys[j]])))
         .attr('fill', colors[j])
         .text(title)
+
+      if (prefix === 'b') {
+        const scaled_data = []
+        for (let i = 0; i < data.length; i++) {
+          if ((i + 1) % 3 === 0) {
+            scaled_data.push(data[i])
+          }
+        }
+        lines.selectAll(".dots")
+          .data(scaled_data)
+          .enter()
+          .append("circle")
+          .style("fill", colors[j])
+          .attr("class", "dot")
+          .attr('cx', function (d) {
+            return xScale(d.date)
+          })
+          .attr('cy', function (d) {
+            return yScale(d[keys[j]])
+          })
+          .attr("r", 10)
+      }
+
     }
 
     //Declare x-axis and y-axis

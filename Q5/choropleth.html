@@ -7,211 +7,211 @@
 
 <head>
 	<!-- add title -->
-	
+
 	<script type="text/javascript" src="../lib/d3.v5.min.js"></script>
 	<script type="text/javascript" src="../lib/d3-geo-projection.v2.min.js"></script>
 	<script type="text/javascript" src="../lib/d3-tip.min.js"></script>
 	<script type="text/javascript" src="../lib/d3.v5.min.js"></script>
 	<script type="text/javascript" src="../lib/topojson.v2.min.js"></script>
-  <script type="text/javascript" src="../lib/d3-legend.min.js"></script>
+	<script type="text/javascript" src="../lib/d3-legend.min.js"></script>
 
 
 
 
 
-	
+
 
 
 	<style>
 		/* define CSS rules here */
-	
+
 	</style>
 </head>
 
 
 <body>
-    <!-- Add heading for the visualization -->
-	
-	<!-- Create dropdown element here. Options should be added after reading in game file, they should not be created here.-->
+<!-- Add heading for the visualization -->
 
-	<select id= "dropdown"></select>
-	
-	<!-- append visualization svg to this div-->
-	<div id='container' class="svg-container"></div>
-    <div id="choropleth"></div>
+<!-- Create dropdown element here. Options should be added after reading in game file, they should not be created here.-->
 
-    <script>
-	
-		// enter code to define margin and dimensions for svg
-	    global_width = 1000,
-	    global_height = 700;
+<select id= "dropdown"></select>
 
-	    var margin = {top:0, right: 100, bottom: 0, left: 10}; 
-	    var width = global_width - margin.left - margin.right, 
-	        height = global_height - margin.top - margin.bottom; 
-		
-		// enter code to create svg
-		var svg = d3.select('div#container')
-					.append("svg")
-					.attr('width', global_width)
-					.attr('height', global_height)
-					.append('g')
-					.attr('class', 'map')
+<!-- append visualization svg to this div-->
+<div id='container' class="svg-container"></div>
+<div id="choropleth"></div>
 
-		
-		// enter code to create color scale
-		var colors = ['#eff3ff','#bdd7e7','#6baed6','#2171b5'] //Source: https://colorbrewer2.org/#type=sequential&scheme=Blues&n=3
+<script>
 
-		// enter code to define tooltip
-        
-		// enter code to define projection and path required for Choropleth
-		var projection = d3.geoMercator()
-						   .scale(130)				   
-						   .translate([width/2, height/2]);
-		
-		
-		var path = d3.geoPath()
-					 .projection(projection);
+	// enter code to define margin and dimensions for svg
+	global_width = 1000,
+			global_height = 700;
+
+	var margin = {top:0, right: 100, bottom: 0, left: 10};
+	var width = global_width - margin.left - margin.right,
+			height = global_height - margin.top - margin.bottom;
+
+	// enter code to create svg
+	var svg = d3.select('div#container')
+			.append("svg")
+			.attr('width', global_width)
+			.attr('height', global_height)
+			.append('g')
+			.attr('class', 'map')
 
 
-		// define any other global variables
-		var country_ratings = d3.csv('ratings-by-country.csv');
-		var world_countries = d3.json('world_countries.json');
+	// enter code to create color scale
+	var colors = ['#eff3ff','#bdd7e7','#6baed6','#2171b5'] //Source: https://colorbrewer2.org/#type=sequential&scheme=Blues&n=3
 
-        Promise.all([country_ratings, world_countries]).then(function(data){
-        	
-            // enter code to call ready() with required arguments
-            var gameData = data[0], //country_ratings data 
-            	world = data[1]; // world_countries data
+	// enter code to define tooltip
 
-         	ready(null, world, gameData);
-
-        });
-		
-    //Chart Title 
-    svg.append('g')
-       .append('text')
-       .attr('id', 'title')
-       .attr("transform", "translate(705,20)")
-       .attr("stroke", "black")
-       .text("Choropleth Map of Board Game Ratings");
-
-    //GT Username
-    svg.append('g')
-       .append('text')
-       .attr('id', 'credit')
-       .attr("transform", "translate(850,680)")
-       .attr("text-anchor", "right")
-       .attr("stroke", "black")
-       .text("eperalta6");
-
-  
-		// this function should be called once the data from files have been read
-		// world: topojson from world_countries.json
-		// gameData: data from ratings-by-country.csv
-		
-        function ready(error, world, gameData) {
-            // enter code to extract all unique games from gameData
-            all_games = [];
-            for (index = 0; index < gameData.length; index++){
-            	all_games.push(gameData[index]['Game'])
-
-            }
+	// enter code to define projection and path required for Choropleth
+	var projection = d3.geoMercator()
+			.scale(130)
+			.translate([width/2, height/2]);
 
 
-            unique_games = d3.set(all_games).values().sort();
+	var path = d3.geoPath()
+			.projection(projection);
 
 
-            game_options= []
+	// define any other global variables
+	var country_ratings = d3.csv('ratings-by-country.csv');
+	var world_countries = d3.json('world_countries.json');
 
-            for(index = 0; index<unique_games.length; index++){
-            	game_id = "game" + index
-            	game_dict = {value: game_id, text: unique_games[index]}
-            	game_options.push(game_dict)
-            }
+	Promise.all([country_ratings, world_countries]).then(function(data){
+
+		// enter code to call ready() with required arguments
+		var gameData = data[0], //country_ratings data
+				world = data[1]; // world_countries data
+
+		ready(null, world, gameData);
+
+	});
+
+	//Chart Title
+	svg.append('g')
+			.append('text')
+			.attr('id', 'title')
+			.attr("transform", "translate(705,20)")
+			.attr("stroke", "black")
+			.text("Choropleth Map of Board Game Ratings");
+
+	//GT Username
+	svg.append('g')
+			.append('text')
+			.attr('id', 'credit')
+			.attr("transform", "translate(850,680)")
+			.attr("text-anchor", "right")
+			.attr("stroke", "black")
+			.text("eperalta6");
 
 
-            // enter code to append the game options to the dropdown
-            //Source for guide: http://bl.ocks.org/feyderm/e6cab5931755897c2eb377ccbf9fdf18
-            d3.select('#dropdown')
-              .selectAll("options")
-              .data(game_options)
-              .enter()
-              .append('option')
-              .append('value', function(d){return d.value})
-              .text(function(d){return d.text});
+	// this function should be called once the data from files have been read
+	// world: topojson from world_countries.json
+	// gameData: data from ratings-by-country.csv
+
+	function ready(error, world, gameData) {
+		// enter code to extract all unique games from gameData
+		all_games = [];
+		for (index = 0; index < gameData.length; index++){
+			all_games.push(gameData[index]['Game'])
+
+		}
 
 
-            // event listener for the dropdown. Update choropleth and legend when selection changes. Call createMapAndLegend() with required arguments.
-            var dropdown_menu = d3.select('#dropdown');
+		unique_games = d3.set(all_games).values().sort();
 
-            dropdown_menu.on("change", function(){
-            	var selectedGame = d3.event.target.value; //This passes the selected string
 
-              createMapAndLegend(world, gameData, selectedGame)
-            });
+		game_options= []
 
-			
-            // create Choropleth with default option. Call createMapAndLegend() with required arguments. 
-            default_game = game_options[0].text
-        		createMapAndLegend(world, gameData, default_game)
+		for(index = 0; index<unique_games.length; index++){
+			game_id = "game" + index
+			game_dict = {value: game_id, text: unique_games[index]}
+			game_options.push(game_dict)
+		}
 
-        }
 
-		// this function should create a Choropleth and legend using the world and gameData arguments for a selectedGame
-		// also use this function to update Choropleth and legend when a different game is selected from the dropdown
-        function createMapAndLegend(world, gameData, selectedGame){
+		// enter code to append the game options to the dropdown
+		//Source for guide: http://bl.ocks.org/feyderm/e6cab5931755897c2eb377ccbf9fdf18
+		d3.select('#dropdown')
+				.selectAll("options")
+				.data(game_options)
+				.enter()
+				.append('option')
+				.append('value', function(d){return d.value})
+				.text(function(d){return d.text});
 
-          //Remove previous selection
-          svg.selectAll('.legend')
-             .remove()
-             .selectAll('.map')
-             .remove()
 
-                    
-        	selectedGame_ratings = []
-          ratingsByCountry = {}
+		// event listener for the dropdown. Update choropleth and legend when selection changes. Call createMapAndLegend() with required arguments.
+		var dropdown_menu = d3.select('#dropdown');
 
-          gameData.forEach(function(d){
-            if (d.Game == selectedGame){
-              ratingsByCountry[d.Country] = +d['Average Rating']              
-              selectedGame_ratings.push(+d['Average Rating'])
-            }})
-        	
+		dropdown_menu.on("change", function(){
+			var selectedGame = d3.event.target.value; //This passes the selected string
 
-        	var color_scale = d3.scaleQuantile()
-                              .domain(selectedGame_ratings)
-                              .range(colors);
+			createMapAndLegend(world, gameData, selectedGame)
+		});
 
-          //Create legend. Resource: https://d3-legend.susielu.com/
-          var legend = d3.legendColor()
-                         .labelFormat(d3.format(".2f"))
-                         .scale(color_scale)
 
-          svg.append('g')
-             .attr('class', 'legend')
-             .attr("transform", "translate(20,20)")
-             .call(legend)
+		// create Choropleth with default option. Call createMapAndLegend() with required arguments.
+		default_game = game_options[0].text
+		createMapAndLegend(world, gameData, default_game)
 
-          
-         	//Create map
-         	svg.append('g')
-             .attr('class', 'map')
-             .selectAll('path')
-         	   .data(world.features)
-         	   .enter()
-         	   .append('path')
-         	   .attr('stroke', "#000")
-             .attr('d', path)
-             .attr('fill', 
-              function(d){
-                  if(ratingsByCountry[d.properties.name]==undefined){return '#b3b3b3'}  
-                  else{return color_scale(ratingsByCountry[d.properties.name])}}) 
+	}
 
-                                          
-			
-        }
-    </script>
+	// this function should create a Choropleth and legend using the world and gameData arguments for a selectedGame
+	// also use this function to update Choropleth and legend when a different game is selected from the dropdown
+	function createMapAndLegend(world, gameData, selectedGame){
+
+		//Remove previous selection
+		svg.selectAll('.legend')
+				.remove()
+				.selectAll('.map')
+				.remove()
+
+
+		selectedGame_ratings = []
+		ratingsByCountry = {}
+
+		gameData.forEach(function(d){
+			if (d.Game == selectedGame){
+				ratingsByCountry[d.Country] = +d['Average Rating']
+				selectedGame_ratings.push(+d['Average Rating'])
+			}})
+
+
+		var color_scale = d3.scaleQuantile()
+				.domain(selectedGame_ratings)
+				.range(colors);
+
+		//Create legend. Resource: https://d3-legend.susielu.com/
+		var legend = d3.legendColor()
+				.labelFormat(d3.format(".2f"))
+				.scale(color_scale)
+
+		svg.append('g')
+				.attr('class', 'legend')
+				.attr("transform", "translate(20,20)")
+				.call(legend)
+
+
+		//Create map
+		svg.append('g')
+				.attr('class', 'map')
+				.selectAll('path')
+				.data(world.features)
+				.enter()
+				.append('path')
+				.attr('stroke', "#000")
+				.attr('d', path)
+				.attr('fill',
+						function(d){
+							if(ratingsByCountry[d.properties.name]==undefined){return '#b3b3b3'}
+							else{return color_scale(ratingsByCountry[d.properties.name])}})
+
+
+
+	}
+</script>
 
 </body>
 
