@@ -1,5 +1,3 @@
-//python -m http.server 8000
-
 window.addEventListener('DOMContentLoaded', (event) => {
 
   d3.dsv(",", "board_games.csv", function(d) {
@@ -11,7 +9,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
   }).then(function(data) {
 
     var links = data;
-
     var nodes = {};
 
     // compute the distinct nodes from the links.
@@ -63,7 +60,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         .on("end", dragended))
       .on("dblclick", dblclick);
 
-
     // add the nodes
     node.append("circle")
       .attr("r", function(d){ // 2.c.1 Scaling nodes based on node degree
@@ -72,14 +68,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
         var currentRadius = 5
         return currentRadius + (d.weight * 3); //Adjust current radius based on returned weight
       })
-      .style('fill', function(d){ // 2.c.2 Use color to reflect node degree
+      .style('fill', function(d) { // 2.c.2 Use color to reflect node degree
         d.weight = path.filter(function(l){
-          return l.source.index == d.index || l.target.index == d.index}).size();
-        if (d.weight == 1) {return '#ece7f2'}
-
-        else if (d.weight ==2 || d.weight ==3) {return '#a6bddb'}
-
-        else if (3 < d.weight) {return '#2b8cbe'}
+          return l.source.index == d.index || l.target.index == d.index
+        }).size();
+        if (d.weight == 1) return '#ece7f2'
+        else if (d.weight ==2 || d.weight ==3) return '#a6bddb'
+        return '#2b8cbe'
       });
 
     // Reference used learning to scale nodes properly: https://stackoverflow.com/questions/43906686/d3-node-radius-depends-on-number-of-links-weight-property
@@ -120,12 +115,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       d.fy = d.y;
 
       d3.select(this) //2.d.2 Marking pinned nodes
-        .append("text")
         .attr("class", "pinned")
-        .attr("x", -10)
-        .attr("y",-5)
-        .text("*")
-        .style("font-size", "16px")
     };
 
     function dragged(d) {
@@ -134,34 +124,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
     };
 
     function dragended(d) {
-      if (!d3.event.active) force.alphaTarget(0);
-      if (d.fixed == true) {
-        d.fx = d.x;
-        d.fy = d.y;
-      }
-      else {
-        d.fx = d.x; //2.d.1 Pining a dragged node
-        d.fy = d.y;
-
-      }
+      d.fx = d.x;
+      d.fy = d.y;
     };
 
     // 2.d.3 Double clicking to unpin and unmark a node
     function dblclick(d){
-      d3.select(this).selectAll('text.pinned').remove()
+
+      d3.select(this) //2.d.2 Marking pinned nodes
+        .attr("class", null)
+
       d.fx = null;
       d.fy = null;
 
     };
-
-    //GT Username
-    svg.append('g')
-      .append('text')
-      .attr('id', 'credit')
-      .attr("transform", "translate(800,50)")
-      .attr("text-anchor", "right")
-      .attr("stroke", "black")
-      .text("eperalta6");
 
   }).catch(function(error) {
     console.log(error);
