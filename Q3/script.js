@@ -20,9 +20,28 @@ const naming = {
   c2: 'Number of Ratings 2016-2020 (Log Scale)',
 }
 
-const drawChart = (prefix) => {
-  console.info(prefix)
+const rankIndices = [0, 2, 3, 4]
 
+const colors = d3.schemeCategory10;
+
+const keys = [
+  'Catan',
+  'Dominion',
+  'Codenames',
+  'Terraforming Mars',
+  'Gloomhaven',
+  'Magic: The Gathering',
+  'Dixit',
+  'Monopoly',
+]
+
+const keysCount = keys.map(key => key + '=count')
+let keysRank = []
+for (let i = 0; i <= rankIndices.length; i++) {
+  keysRank.push(keys[i] + '=rank')
+}
+
+const drawChart = (prefix) => {
   //Appending first SVG element
   const svg = d3.select("svg#svg-" + prefix)
     .attr("transform", "translate(50,50)")
@@ -42,24 +61,15 @@ const drawChart = (prefix) => {
     .attr("id", "plot-" + prefix)
     .attr("transform", "translate(80,50)");
 
-  const colors = d3.schemeCategory10;
-
-  const keys = [
-    'Catan=count',
-    'Dominion=count',
-    'Codenames=count',
-    'Terraforming Mars=count',
-    'Gloomhaven=count',
-    'Magic: The Gathering=count',
-    'Dixit=count',
-    'Monopoly=count'
-  ];
-
   d3.dsv(',', 'boardgame_ratings.csv', d => {
     let data = {
       date: d3.timeParse("%Y-%m-%d")(d.date)
     }
-    keys.map(key => {
+    const keysSum = [
+      ...keysCount,
+      ...keysRank
+    ]
+    keysSum.map(key => {
       data[key] = +d[key]
     })
     return data
@@ -68,9 +78,9 @@ const drawChart = (prefix) => {
     let data_dict = {};
     const all_values = [];
     for(let i = 0; i < data.length; i++){
-      for (let j = 0; j < keys.length; j++){
-        all_values.push(data[i][keys[j]])
-        data_dict[keys[j]] = [data[i][keys[j]]]
+      for (let j = 0; j < keysCount.length; j++){
+        all_values.push(data[i][keysCount[j]])
+        data_dict[keysCount[j]] = [data[i][keysCount[j]]]
       }
     }
 
@@ -96,14 +106,13 @@ const drawChart = (prefix) => {
       .attr("id", "lines-" + prefix)
 
     let orderMain = [], orderOther = []
-    for (let j = 0; j < keys.length; j++) {
-
+    for (let j = 0; j < keysCount.length; j++) {
       const line = d3.line()
         .x(function (d) {
           return xScale(d.date)
         })
         .y(function (d) {
-          return yScale(d[keys[j]])
+          return yScale(d[keysCount[j]])
         })
         .curve(d3.curveMonotoneX)
 
@@ -118,7 +127,7 @@ const drawChart = (prefix) => {
         .attr('class', 'line')
         .attr('d', line)
 
-      const title = keys[j].split('=')[0]
+      const title = keysCount[j].split('=')[0]
 
       let current = false
       lineContainer
@@ -131,11 +140,11 @@ const drawChart = (prefix) => {
         })
         .append('text')
         .attr('x', width + 5)
-        .attr('y', _ => yScale(d3.max(data_dict[keys[j]])))
+        .attr('y', _ => yScale(d3.max(data_dict[keysCount[j]])))
         .attr('fill', colors[j])
         .text(title)
 
-      if (prefix !== 'a' && [0, 2, 3, 4].includes(j)) {
+      if (prefix !== 'a' && rankIndices.includes(j)) {
 
         const dotsContainer = lineContainer
           .append('g')
@@ -161,7 +170,7 @@ const drawChart = (prefix) => {
             return xScale(d.date)
           })
           .attr('cy', function (d) {
-            return yScale(d[keys[j]])
+            return yScale(d[keysCount[j]])
           })
           .attr("r", 15)
 
@@ -170,10 +179,12 @@ const drawChart = (prefix) => {
             return xScale(d.date)
           })
           .attr('y', function (d) {
-            return yScale(d[keys[j]])
+            return yScale(d[keysCount[j]])
           })
           .text(function (d) {
-            return d[keys[j]]
+            console.log(keys[j] + '=rank')
+            console.log(keysRank)
+            return d[keys[j] + '=rank']
           })
           .attr('text-anchor', 'middle')
           .attr('dy', '.3em')
@@ -257,3 +268,5 @@ const drawChart = (prefix) => {
   })
 
 }
+
+// todo: Yjones7
