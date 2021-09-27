@@ -1,6 +1,8 @@
 window.addEventListener('DOMContentLoaded', () => {
   drawChart('a')
   drawChart('b')
+  drawChart('c1')
+  drawChart('c2')
 });
 
 const global_width = 1000,
@@ -11,7 +13,16 @@ const margin = {top: 100, right: 200, bottom: 50, left: 150};
 const width = global_width - margin.left - margin.right,
   height = global_height - margin.top - margin.bottom;
 
+const naming = {
+  a: 'Number of Ratings 2016-2020',
+  b: 'Number of Ratings 2016-2020 with Rankings',
+  c1: 'Number of Ratings 2016-2020 (Square root Scale)',
+  c2: 'Number of Ratings 2016-2020 (Log Scale)',
+}
+
 const drawChart = (prefix) => {
+  console.info(prefix)
+
   //Appending first SVG element
   const svg = d3.select("svg#svg-" + prefix)
     .attr("transform", "translate(50,50)")
@@ -21,11 +32,11 @@ const drawChart = (prefix) => {
   //Chart Title
   svg.append('text')
     .attr('id', 'title-' + prefix)
-    .attr("x", width / 2.6)
+    .attr("x", width / 5)
     .attr('y', 25)
     .attr("font-size", "26px")
     .attr("fill", "#282828")
-    .text("Number of Ratings 2016 - 2020");
+    .text(naming[prefix]);
 
   const plot = svg.append("g")
     .attr("id", "plot-" + prefix)
@@ -64,12 +75,21 @@ const drawChart = (prefix) => {
     }
 
     // Scales
-    const xScale = d3.scaleTime().range([0, width]),
+    const xScale = d3.scaleTime().range([0, width]);
+    let yScale
+    if (prefix === 'c1') {
+      yScale = d3.scaleSqrt().rangeRound([height, 0])
+      yScale.domain([(0), d3.max(all_values)])
+    } else if (prefix === 'c2') {
+      yScale = d3.scaleLog().rangeRound([height, 0])
+      yScale.domain([1, 100000])
+    } else {
       yScale = d3.scaleLinear().rangeRound([height, 0]);
+      yScale.domain([(0), d3.max(all_values)])
+    }
 
     xScale.domain(d3.extent(data, function(d){
       return d.date}))
-    yScale.domain([(0), d3.max(all_values)]) // [0, "95775"]
 
     // Lines with legends
     const linesContainer = plot.append("g")
@@ -115,7 +135,7 @@ const drawChart = (prefix) => {
         .attr('fill', colors[j])
         .text(title)
 
-      if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
+      if (prefix !== 'a' && [0, 2, 3, 4].includes(j)) {
 
         const dotsContainer = lineContainer
           .append('g')
@@ -168,7 +188,7 @@ const drawChart = (prefix) => {
       }
     }
 
-    if (prefix === 'b') {
+    if (prefix !== 'a') {
       // Add Ranks Legend
       const legend = svg.append('g')
         .attr('id', 'legend-' + prefix)
