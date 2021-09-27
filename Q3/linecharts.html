@@ -8,11 +8,27 @@
 
 	<style>
 
+		/*#x-axis-b {*/
+		/*	position: relative;*/
+		/*	z-index: -1;*/
+		/*}*/
+
 		/* Style the lines by removing the fill and applying a stroke */
-		.line {
+		.line-container {
+			position: relative;
+			z-index: 0;
+		}
+		.line-container .line {
 			fill: none;
 			stroke: #ffab00;
 			stroke-width: 3;
+			position: relative;
+			z-index: -1;
+		}
+
+		.line-container .line-info {
+			position: relative;
+			z-index: 1000;
 		}
 
 		.overlay {

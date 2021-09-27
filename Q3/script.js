@@ -72,10 +72,12 @@ const drawChart = (prefix) => {
     yScale.domain([(0), d3.max(all_values)]) // [0, "95775"]
 
     // Lines with legends
-    const lines = plot.append("g")
+    const linesContainer = plot.append("g")
       .attr("id", "lines-a")
 
+    let orderMain = [], orderOther = []
     for (let j = 0; j < keys.length; j++) {
+
       const line = d3.line()
         .x(function (d) {
           return xScale(d.date)
@@ -85,7 +87,12 @@ const drawChart = (prefix) => {
         })
         .curve(d3.curveMonotoneX)
 
-      lines.append('path')
+      const lineContainer = linesContainer
+        .append('g')
+        .attr('class', 'line-container')
+
+      lineContainer
+        .append('path')
         .datum(data) // Binds data to the line
         .style("stroke", colors[j]) // Color
         .attr('class', 'line') // Assign a class for styling
@@ -94,13 +101,11 @@ const drawChart = (prefix) => {
       const title = keys[j].split('=')[0]
 
       let current = false
-      lines
-        .selectAll('line')
-        .data(data)
-        .enter()
+      lineContainer
         .filter(_ => {
           if (current !== j) {
             current = j
+            console.log(j, title)
             return true
           }
           return false
@@ -111,59 +116,61 @@ const drawChart = (prefix) => {
         .attr('fill', colors[j])
         .text(title)
 
-      // if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
-        // const scaled_data = []
-        // for (let i = 0; i < data.length; i++) {
-        //   if ((i + 1) % 3 === 0) {
-        //     scaled_data.push(data[i])
-        //     console.log(data[i])
-        //   }
-        // }
-        //
-        // const dots = lines.selectAll(".dots")
-        //   .data(scaled_data)
-        //   .enter()
-        //   .append("g")
-        //   .attr('class', 'dot')
-        //   .attr('cx', function (d) {
-        //     return xScale(d.date)
-        //   })
-        //   .attr('cy', function (d) {
-        //     return yScale(d[keys[j]])
-        //   })
-        //
-        // dots.enter()
-        //   .append("circle")
-        //   .style("fill", colors[j])
-        //   .attr("r", 10)
-        //
-        // dots.enter()
-        //   .insert('text')
-        //   .text('blab')
-        //   // .text(function (d, k) {
-        //   //   if (k % 3 === 2) {
-        //   //     return d[keys[j]] + k;
-        //   //   }
-        //   // })
-        //   .attr("x", function (d, k) {
-        //     return xScale(d.date)
-        //     // if (k % 3 === 2) {
-        //     //   return xScale(d.date) - 5;
-        //     // }
-        //   })
-        //   .attr("y", function (d, k) {
-        //     return yScale(d[keys[j]])
-        //     // if (k % 3 === 2) {
-        //     //   return yScale(d[keys[j]]) + 3;
-        //     // }
-        //   })
-        //   .attr('font-size', '8px')
-        //   .attr('stroke', 'red')
-        //   .attr('font', 'sans-serif')
-        //
-      // }
+      if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
 
+        const dotsContainer = lineContainer
+          .append('g')
+          .attr('class', 'line-info')
+
+        const scaled_data = []
+        for (let i = 0; i < data.length; i++) {
+          if ((i + 1) % 3 === 0) {
+            scaled_data.push(data[i])
+            // console.log(data[i])
+          }
+        }
+
+        const dotContainer = dotsContainer
+          .selectAll(".dots")
+          .data(scaled_data)
+          .enter()
+          .append('g')
+          .attr('class', 'dot')
+
+        dotContainer.append('circle')
+          .style("fill", colors[j])
+          // .attr('class', 'dot')
+          .attr('cx', function (d) {
+            return xScale(d.date)
+          })
+          .attr('cy', function (d) {
+            return yScale(d[keys[j]])
+          })
+          .attr("r", 10)
+
+        dotContainer.append('text')
+          .text('007')
+          .attr('x', function (d) {
+            return xScale(d.date)
+          })
+          .attr('y', function (d) {
+            return yScale(d[keys[j]])
+          })
+          .attr('text-anchor', 'middle')
+          .attr('dy', '.3em')
+          .attr('stroke', 'white')
+          .attr('font-size', '8px')
+          .attr('font', 'sans-serif')
+
+        orderMain.push(j)
+      } else {
+        orderOther.push(j)
+      }
     }
+
+    const ordering = linesContainer.selectAll('.line-container')
+    ordering.data(orderMain.concat(orderOther))
+    ordering.sort(d3.descending)
 
     // Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
@@ -204,17 +211,6 @@ const drawChart = (prefix) => {
       .text("Number of Ratings")
     yAxisContainer
       .call(yAxisBlank)
-
-    additionalFn(prefix)
-
   })
 
-}
-
-const additionalFn = (prefix) => {
-  switch (prefix) {
-    case 'b':
-      console.log('additional')
-      break
-  }
 }
