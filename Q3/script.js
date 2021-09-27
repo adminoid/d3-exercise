@@ -93,41 +93,79 @@ const drawChart = (prefix) => {
 
       const title = keys[j].split('=')[0]
 
-      lines.append('g')
+      let current = false
+      lines
         .selectAll('line')
         .data(data)
         .enter()
+        .filter(_ => {
+          if (current !== j) {
+            current = j
+            return true
+          }
+          return false
+        })
         .append('text')
         .attr('x', width + 5)
         .attr('y', _ => yScale(d3.max(data_dict[keys[j]])))
         .attr('fill', colors[j])
         .text(title)
 
-      if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
-        const scaled_data = []
-        for (let i = 0; i < data.length; i++) {
-          if ((i + 1) % 3 === 0) {
-            scaled_data.push(data[i])
-          }
-        }
-        lines.selectAll(".dots")
-          .data(scaled_data)
-          .enter()
-          .append("circle")
-          .style("fill", colors[j])
-          .attr("class", "dot")
-          .attr('cx', function (d) {
-            return xScale(d.date)
-          })
-          .attr('cy', function (d) {
-            return yScale(d[keys[j]])
-          })
-          .attr("r", 10)
-      }
+      // if (prefix === 'b' && [0, 2, 3, 4].includes(j)) {
+        // const scaled_data = []
+        // for (let i = 0; i < data.length; i++) {
+        //   if ((i + 1) % 3 === 0) {
+        //     scaled_data.push(data[i])
+        //     console.log(data[i])
+        //   }
+        // }
+        //
+        // const dots = lines.selectAll(".dots")
+        //   .data(scaled_data)
+        //   .enter()
+        //   .append("g")
+        //   .attr('class', 'dot')
+        //   .attr('cx', function (d) {
+        //     return xScale(d.date)
+        //   })
+        //   .attr('cy', function (d) {
+        //     return yScale(d[keys[j]])
+        //   })
+        //
+        // dots.enter()
+        //   .append("circle")
+        //   .style("fill", colors[j])
+        //   .attr("r", 10)
+        //
+        // dots.enter()
+        //   .insert('text')
+        //   .text('blab')
+        //   // .text(function (d, k) {
+        //   //   if (k % 3 === 2) {
+        //   //     return d[keys[j]] + k;
+        //   //   }
+        //   // })
+        //   .attr("x", function (d, k) {
+        //     return xScale(d.date)
+        //     // if (k % 3 === 2) {
+        //     //   return xScale(d.date) - 5;
+        //     // }
+        //   })
+        //   .attr("y", function (d, k) {
+        //     return yScale(d[keys[j]])
+        //     // if (k % 3 === 2) {
+        //     //   return yScale(d[keys[j]]) + 3;
+        //     // }
+        //   })
+        //   .attr('font-size', '8px')
+        //   .attr('stroke', 'red')
+        //   .attr('font', 'sans-serif')
+        //
+      // }
 
     }
 
-    //Declare x-axis and y-axis
+    // Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
       .tickFormat(d3.timeFormat('%b %y'))
     const yAxisBlank = d3.axisLeft(yScale)
