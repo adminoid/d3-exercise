@@ -73,7 +73,7 @@ const drawChart = (prefix) => {
 
     // Lines with legends
     const linesContainer = plot.append("g")
-      .attr("id", "lines-a")
+      .attr("id", "lines-" + prefix)
 
     let orderMain = [], orderOther = []
     for (let j = 0; j < keys.length; j++) {
@@ -105,7 +105,6 @@ const drawChart = (prefix) => {
         .filter(_ => {
           if (current !== j) {
             current = j
-            console.log(j, title)
             return true
           }
           return false
@@ -126,7 +125,6 @@ const drawChart = (prefix) => {
         for (let i = 0; i < data.length; i++) {
           if ((i + 1) % 3 === 0) {
             scaled_data.push(data[i])
-            // console.log(data[i])
           }
         }
 
@@ -139,22 +137,23 @@ const drawChart = (prefix) => {
 
         dotContainer.append('circle')
           .style("fill", colors[j])
-          // .attr('class', 'dot')
           .attr('cx', function (d) {
             return xScale(d.date)
           })
           .attr('cy', function (d) {
             return yScale(d[keys[j]])
           })
-          .attr("r", 10)
+          .attr("r", 15)
 
         dotContainer.append('text')
-          .text('007')
           .attr('x', function (d) {
             return xScale(d.date)
           })
           .attr('y', function (d) {
             return yScale(d[keys[j]])
+          })
+          .text(function (d) {
+            return d[keys[j]]
           })
           .attr('text-anchor', 'middle')
           .attr('dy', '.3em')
@@ -163,14 +162,40 @@ const drawChart = (prefix) => {
           .attr('font', 'sans-serif')
 
         orderMain.push(j)
+
       } else {
         orderOther.push(j)
       }
     }
 
-    const ordering = linesContainer.selectAll('.line-container')
-    ordering.data(orderMain.concat(orderOther))
-    ordering.sort(d3.descending)
+    if (prefix === 'b') {
+      // Add Ranks Legend
+      const legend = svg.append('g')
+        .attr('id', 'legend-' + prefix)
+        .attr('transform', `translate(${width}, ${height})`)
+
+      legend.append('circle')
+        .attr('r', 15)
+        .attr('stroke', 'black')
+        .attr('fill', 'black')
+      legend.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('stroke', 'white')
+        .attr('font-size', '13px')
+        .attr('font', 'sans-serif')
+        .attr('dy', '.3em')
+        .attr('fill', 'white')
+        .text('rank')
+      legend.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '2em')
+        .attr('fill', 'black')
+        .text('BoardGameGeek Rank')
+
+      const ordering = linesContainer.selectAll('.line-container')
+      ordering.data(orderMain.concat(orderOther))
+      ordering.sort(d3.descending)
+    }
 
     // Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
