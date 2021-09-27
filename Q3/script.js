@@ -93,10 +93,10 @@ const drawChart = (prefix) => {
 
       lineContainer
         .append('path')
-        .datum(data) // Binds data to the line
-        .style("stroke", colors[j]) // Color
-        .attr('class', 'line') // Assign a class for styling
-        .attr('d', line) // Calls the line generator
+        .datum(data)
+        .style("stroke", colors[j])
+        .attr('class', 'line')
+        .attr('d', line)
 
       const title = keys[j].split('=')[0]
 
@@ -175,16 +175,17 @@ const drawChart = (prefix) => {
     // Declare x-axis and y-axis
     const xAxis = d3.axisBottom(xScale)
       .tickFormat(d3.timeFormat('%b %y'))
-    const yAxisBlank = d3.axisLeft(yScale)
+    const yAxis = d3.axisLeft(yScale)
       .ticks(10)
 
     // Append axes
     const xAxisContainer = plot.append('g')
       .attr('id', 'x-axis-' + prefix)
       .attr("transform", "translate(0," + height + ")")
+    xAxisContainer
+      .call(xAxis)
     // text label
-    xAxisContainer.append("g")
-      .attr('id', 'x-axis-title-' + prefix)
+    xAxisContainer
       .append('text')
       .attr("font-size", "14px")
       .attr("fill", "#282828")
@@ -192,16 +193,15 @@ const drawChart = (prefix) => {
       .attr('y', 40)
       .attr("text-anchor", "middle")
       .text("Month")
-    xAxisContainer.append('g')
-      .call(xAxis)
 
     const yAxisContainer = plot.append('g')
       .attr('id', 'y-axis-' + prefix)
+    yAxisContainer
+      .call(yAxis)
     // text label
-    yAxisContainer.append("g")
-      .attr('id', 'y-axis-title-' + prefix)
-      .attr("transform", "rotate(-90) translate(0, -3)")
+    yAxisContainer
       .append('text')
+      .attr("transform", "rotate(-90) translate(0, -3)")
       .attr("font-size", "14px")
       .attr("fill", "#282828")
       .attr("x", -120)
@@ -209,8 +209,6 @@ const drawChart = (prefix) => {
       .attr("dy", "-5.1em")
       .attr("text-anchor", "end")
       .text("Number of Ratings")
-    yAxisContainer
-      .call(yAxisBlank)
   })
 
 }
