@@ -172,7 +172,7 @@ const drawChart = (prefix) => {
           .attr('cy', function (d) {
             return yScale(d[keysCount[j]])
           })
-          .attr("r", 15)
+          .attr("r", 10)
 
         dotContainer.append('text')
           .attr('x', function (d) {
@@ -182,8 +182,6 @@ const drawChart = (prefix) => {
             return yScale(d[keysCount[j]])
           })
           .text(function (d) {
-            console.log(keys[j] + '=rank')
-            console.log(keysRank)
             return d[keys[j] + '=rank']
           })
           .attr('text-anchor', 'middle')
@@ -206,13 +204,12 @@ const drawChart = (prefix) => {
         .attr('transform', `translate(${width}, ${height})`)
 
       legend.append('circle')
-        .attr('r', 15)
+        .attr('r', 10)
         .attr('stroke', 'black')
         .attr('fill', 'black')
       legend.append('text')
         .attr('text-anchor', 'middle')
-        .attr('stroke', 'white')
-        .attr('font-size', '13px')
+        .attr('font-size', '10px')
         .attr('font', 'sans-serif')
         .attr('dy', '.3em')
         .attr('fill', 'white')
