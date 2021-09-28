@@ -1,0 +1,71 @@
+
+/* AXES */
+/* ticks */
+.axis line{
+    stroke: #706f6f;
+    stroke-width: 0.5;
+    shape-rendering: crispEdges;
+}
+/* axis contour */
+.axis path {
+    stroke: #706f6f;
+    stroke-width: 0.7;
+    shape-rendering: crispEdges;
+}
+/* axis text */
+.axis text {
+    fill: #2b2929;
+    font-family: Georgia;
+    font-size: 120%;
+}
+/* LINE CHART */
+path.line-0 {
+    fill: none;
+    stroke: #ed3700;
+}
+path.line-1 {
+    fill: none;
+    stroke: #2b2929;
+    stroke-dasharray: 2;
+}
+path.line-2 {
+    fill: none;
+    stroke: #9c9c9c;
+    stroke-dasharray: 6;
+}
+.serie_label {
+    fill: #2b2929;
+    font-family: Georgia;
+    font-size: 80%;
+}
+.pagebreak {
+    page-break-before: always;
+} /* page-break-after works, as well */
+/*.bar {*/
+/*  fill: mediumpurple;*/
+/*}*/
+.tooltip {
+    border: 3px solid #CCCCCC;
+    border-radius: 3px;
+    filter: drop-shadow(0 0 0.25rem #CCCCCC);
+}
+innerPath {
+    fill: none;
+    stroke: #9c9c9c;
+    stroke-dasharray: 6;
+}
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+.bar {
+    fill: mediumpurple;
+}
+.grid .path{
+    stroke: lightgrey;
+    opacity: 0.7;
+}
