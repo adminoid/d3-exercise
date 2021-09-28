@@ -58,6 +58,7 @@ d3.csv('average-rating.csv').then(function(data) {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr('viewBox', [0,0,width,height]);
+
   // generate color for each line:
   for (let i = 0; i < colorArray[0].length; i++) {
     const lineDict = {};
@@ -81,125 +82,64 @@ d3.csv('average-rating.csv').then(function(data) {
       .attr('id', 'line' + key)
       .data([yearsData[key]])
       .attr("class", "line " + categories[i])
-      // .style('stroke', colorScheme[i])
       .style('stroke', lineArray[i].color)
-      .style('fill', 'none')                // Remove shaded area
+      .style('fill', 'none')
       .attr("d", d3.line()
         .x(function(d) { return x(+d.rating); })
         .y(function(d) { return y(+d['users rated']); })
       )
+
+    svg1.selectAll('myCircles')
+      .attr('id', 'circle' + key)
+      .data(yearsData[key])
+      .enter()
+      .append("circle") // Uses the enter().append() method
+      .attr('fill', lineArray[i].color)
+      .attr("cx", function(d) { return x(d.rating) })
+      .attr("cy", function(d) { return y(+d['users rated']) })
+      .attr("r", 2)
+      .on('mouseover', mouseoverHandler)
+      .on('mouseout', function(_) {
+        d3.select(this).attr('r', 2)
+        d3.select('#barchart').remove()
+      })
+
     i++
   }
-
-  svg1.selectAll('myCircles')
-    .attr('id', 'circle2015')
-    .data(yearsData["2015"])
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr('fill', lineArray[0].color)
-    .attr("cx", function(d) { return x(d.rating) })
-    .attr("cy", function(d) { return y(+d['users rated']) })
-    .attr("r", 2)
-    .on('mouseover', mouseoverHandler)
-    .on('mouseout', function(_) {
-      d3.select(this).attr('r', 2);
-      d3.select('#barchart').remove();
-    });
-  svg1.selectAll('myCircles')
-    .attr('id', 'circle2016')
-    .data(yearsData["2016"])
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr('fill', lineArray[1].color)
-    .attr("cx", function(d) { return x(d.rating) })
-    .attr("cy", function(d) { return y(+d['users rated']) })
-    .attr("r", 2)
-    .on('mouseover', mouseoverHandler)
-    .on('mouseout', function(_) {
-      d3.select(this).attr('r', 2);
-      d3.select('#barchart').remove();
-    });
-  svg1.selectAll('myCircles')
-    .attr('id', 'circle2017')
-    .data(yearsData["2017"])
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr('fill', lineArray[2].color)
-    .attr("cx", function(d) { return x(d.rating) })
-    .attr("cy", function(d) { return y(+d['users rated']) })
-    .attr("r", 2)
-    .on('mouseover', mouseoverHandler)
-    .on('mouseout', function(_) {
-      d3.select(this).attr('r', 2);
-      d3.select('#barchart').remove();
-    });
-  svg1.selectAll('myCircles')
-    .attr('id', 'circle2018')
-    .data(yearsData["2018"])
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr('fill', lineArray[3].color)
-    .attr("cx", function(d) { return x(d.rating) })
-    .attr("cy", function(d) { return y(+d['users rated']) })
-    .attr("r", 2)
-    .on('mouseover', mouseoverHandler)
-    .on('mouseout', function(_) {
-      d3.select(this).attr('r', 2);
-      d3.select('#barchart').remove();
-    });
-  svg1.selectAll('myCircles')
-    .attr('id', 'circle2019')
-    .data(yearsData["2019"])
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr('fill', lineArray[4].color)
-    .attr("cx", function(d) { return x(d.rating) })
-    .attr("cy", function(d) { return y(+d['users rated']) })
-    .attr("r", 2)
-    .on('mouseover', mouseoverHandler)
-    .on('mouseout', function(_) {
-      d3.select(this).attr('r', 2);
-      d3.select('#barchart').remove();
-    });
 
   function mouseoverHandler(d) {
     console.log(d, d.year, d.rating, d['users rated']);
     let selectedYear = d.year
     const usersRating = d.rating;
     let q3Data = [], maxRated = []
-    // const colorMap = {
-    //   '2015': lineArray[0].color, '2016': lineArray[1].color, '2017': lineArray[2].color,
-    //   '2018': lineArray[3].color, '2019': lineArray[4].color};
 
-    let processBarData = function() {
-      for (let i = 0; i < data.length; i++) {
-        if (Math.floor(parseInt(data[i]['average_rating'])) === usersRating && data[i]['year'] === selectedYear) {
-          if (q3Data.length < 5) {
-            q3Data.push(data[i]);
-            maxRated.push(parseInt(data[i]['users_rated']))
-          }
-          else if (q3Data.length >= 5 && parseInt(data[i]['users_rated']) > Math.min(... maxRated)) {
-            let minIndex = maxRated.indexOf(Math.min(... maxRated));
-            q3Data[minIndex] = data[i];
-            maxRated[minIndex] = parseInt(data[i]['users_rated']);
-          }
+    for (let i = 0; i < data.length; i++) {
+      if (Math.floor(parseInt(data[i]['average_rating'])) === usersRating && data[i]['year'] === selectedYear) {
+        if (q3Data.length < 5) {
+          q3Data.push(data[i]);
+          maxRated.push(parseInt(data[i]['users_rated']))
+        }
+        else if (q3Data.length >= 5 && parseInt(data[i]['users_rated']) > Math.min(... maxRated)) {
+          let minIndex = maxRated.indexOf(Math.min(... maxRated));
+          q3Data[minIndex] = data[i];
+          maxRated[minIndex] = parseInt(data[i]['users_rated']);
         }
       }
-      function sortData(aList) {                  // sort by descending order
-        for (let i = 0; i < aList.length; i++) {
-          let key = aList[i],
-            j = i - 1;
-          while (j >= 0 && parseInt(key['users_rated']) > parseInt(aList[j]['users_rated'])) {
-            aList[j+1] = aList[j];
-            j--;
-          }
-          aList[j+1] = key;
-        }
-      }
-      sortData(q3Data);
-      // q3Data.forEach(function(d) { d.users_rated = d.users_rated } )
     }
-    processBarData();           // Prepare data for drawing barchart.
+    function sortData(aList) {                  // sort by descending order
+      for (let i = 0; i < aList.length; i++) {
+        let key = aList[i],
+          j = i - 1;
+        while (j >= 0 && parseInt(key['users_rated']) > parseInt(aList[j]['users_rated'])) {
+          aList[j+1] = aList[j];
+          j--;
+        }
+        aList[j+1] = key;
+      }
+    }
+    sortData(q3Data);
+    // q3Data.forEach(function(d) { d.users_rated = d.users_rated } )
+
     if (q3Data) {
       while (q3Data.length > 0 && q3Data.length < 5) {
         let specialSpace = '';
