@@ -94,11 +94,6 @@ d3.csv('average-rating.csv').then(function(data) {
     i++
   }
 
-  svgMain.append('text')
-    .attr('x', width / 2 - 100)
-    // .attr('dy', '1em')
-    .text('Board games by Rating 2015-2019');
-
   // Add the X axis:
   const xAxisLines = svgMain.append('g')
     .attr('id', 'x-axis-lines')
@@ -147,6 +142,44 @@ d3.csv('average-rating.csv').then(function(data) {
     j++
   }
 
+  svgMain.append('g')
+    .attr('id', 'line_chart_title')
+    .attr('transform', `translate(${width / 2 + 50}, ${margin / 2})`)
+    .attr('width', width)
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '1em')
+    .text('Board games by Rating 2015-2019')
+
+  // Add my GT Username:
+  svgMain.append('g')
+    .attr('id', 'credit')
+    .append('text')
+    .attr('y', 20)
+    .attr('x', width/2-150)
+    .attr('stroke', 'steelblue')
+    .attr('font-size', '15px')
+    .attr('font-weight', 'bold')
+    .text('GT Username: Yjones7')
+
+  // Add legend:
+  const legend = svgMain.append('g')
+    .attr('id', 'legend')
+    .attr('transform', `translate(${width}, ${margin})`)
+
+  for (let k = 0; k < categories.length; k++) {
+    legend.append('circle')
+      .attr('transform', `translate(0, ${k * 20 - 5})`)
+      .attr("fill", _ => lineArray[k].color)
+      .attr('r', 5)
+  }
+
+  for (let k = 0; k < categories.length; k++) {
+    legend.append('text')
+      .text(categories[k])
+      .attr("fill", _ => lineArray[k].color)
+      .attr("transform", `translate(15,${k * 20})`);
+  }
 
 
   function mouseoverHandler(d) {
@@ -159,8 +192,7 @@ d3.csv('average-rating.csv').then(function(data) {
         if (q3Data && q3Data.length < 5) {
           q3Data.push(data[i]);
           maxRated.push(parseInt(data[i]['users_rated']))
-        }
-        else if (q3Data
+        } else if (q3Data
           && q3Data.length >= 5
           && parseInt(data[i]['users_rated']) > Math.min(... maxRated)) {
           let minIndex = maxRated.indexOf(Math.min(... maxRated));
@@ -259,28 +291,4 @@ d3.csv('average-rating.csv').then(function(data) {
 
   }
 
-  // Add legend:
-  const lineLegend = svgMain.selectAll('.lineLegend')
-    .data(categories)
-    .enter()
-    .append('g')
-    .attr('class', 'lineLegend')
-    .attr('transform', function(d, i) {
-      return 'translate(' + width + ',' + (i * 20) + ')';
-    });
-  lineLegend.append('text')
-    .text(function(d) { return d;})
-    .attr("transform", "translate(15,9)"); //align texts with boxes
-  lineLegend.append("circle")
-    .attr("fill", function (d, i) {return lineArray[i].color; })
-    .attr('r', 5)
-
-  // Add my GT Username:
-  svgMain.append('text')
-    .attr('y', 20)
-    .attr('x', width/2-150)
-    .attr('stroke', 'steelblue')
-    .attr('font-size', '15px')
-    .attr('font-weight', 'bold')
-    .text('GT Username: Yjones7')
 })
