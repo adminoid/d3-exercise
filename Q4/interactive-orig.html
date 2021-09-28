@@ -202,6 +202,7 @@
         'rating': q1Data[i]['rating']
       });
     }
+
     svg1.append('path')
             .attr('id', 'line2015')
             .data([data2015])
@@ -252,6 +253,8 @@
                     .x(function(d) { return x(+d.rating); })
                     .y(function(d) { return y(+d['users rated']); })
             );
+
+
     // Add circiles here:
     svg1.selectAll('myCircles')
             .attr('id', 'circle2015')

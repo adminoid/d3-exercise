@@ -3,6 +3,14 @@ const margin = {top: 50, right: 200, bottom: 50, left: 150},
   width = 800 - margin.left - margin.right,
   height = 350 - margin.top - margin.bottom;
 
+const yearsData = {
+  '2015': [],
+  '2016': [],
+  '2017': [],
+  '2018': [],
+  '2019': [],
+}
+
 d3.csv('average-rating.csv').then(function(data) {
   data.forEach(function (d) {
     d.average_rating = Math.floor(d.average_rating);
@@ -40,9 +48,9 @@ d3.csv('average-rating.csv').then(function(data) {
   y.domain([0, maxCount+50]);
 
   // Define colors:
-  const lineArray = [],
-    colorArray = [d3.schemeCategory10, d3.schemeAccent],
-    colorScheme = d3.scaleOrdinal(colorArray[0]);
+  const lineArray = []
+  const colorArray = [d3.schemeCategory10, d3.schemeAccent]
+  const colorScheme = d3.scaleOrdinal(colorArray[0]);
   const svg1 = d3.select('body')
     .append('svg')
     .attr("width", width + margin.left + margin.right)
@@ -57,88 +65,35 @@ d3.csv('average-rating.csv').then(function(data) {
     lineArray.push(lineDict);
   }
 
-  let data2015 = [], data2016 = [], data2017 = [], data2018 = [], data2019 = [];
   for (let i = 0; i < q1Data.length; i++) {
-    data2015.push({
-      'year': '2015',
-      'users rated': q1Data[i]['2015'],
-      'rating': q1Data[i]['rating']
-    });
-    data2016.push({
-      'year': '2016',
-      'users rated': q1Data[i]['2016'],
-      'rating': q1Data[i]['rating']
-    });
-    data2017.push({
-      'year': '2017',
-      'users rated': q1Data[i]['2017'],
-      'rating': q1Data[i]['rating']
-    });
-    data2018.push({
-      'year': '2018',
-      'users rated': q1Data[i]['2018'],
-      'rating': q1Data[i]['rating']
-    });
-    data2019.push({
-      'year': '2019',
-      'users rated': q1Data[i]['2019'],
-      'rating': q1Data[i]['rating']
-    });
+    for (const key in yearsData) {
+      yearsData[key].push({
+        'year': key,
+        'users rated': q1Data[i][key],
+        'rating': q1Data[i]['rating']
+      })
+    }
   }
-  svg1.append('path')
-    .attr('id', 'line2015')
-    .data([data2015])
-    .attr("class", "line " + categories[0])
-    .style('stroke', lineArray[0].color)
-    .style('fill', 'none')                // Remove shaded area
-    .attr("d", d3.line()
-      .x(function(d) { return x(+d.rating); })
-      .y(function(d) { return y(+d['users rated']); })
-    );
-  svg1.append('path')
-    .attr('id', 'line2016')
-    .data([data2016])
-    .attr("class", "line " + categories[1])
-    .style('stroke', lineArray[1].color)
-    .style('fill', 'none')                // Remove shaded area
-    .attr("d", d3.line()
-      .x(function(d) { return x(+d.rating); })
-      .y(function(d) { return y(+d['users rated']); })
-    );
-  svg1.append('path')
-    .attr('id', 'line2017')
-    .data([data2017])
-    .attr("class", "line " + categories[2])
-    .style('stroke', lineArray[2].color)
-    .style('fill', 'none')                // Remove shaded area
-    .attr("d", d3.line()
-      .x(function(d) { return x(+d.rating); })
-      .y(function(d) { return y(+d['users rated']); })
-    );
-  svg1.append('path')
-    .attr('id', 'line2018')
-    .data([data2018])
-    .attr("class", "line " + categories[3])
-    .style('stroke', lineArray[3].color)
-    .style('fill', 'none')                // Remove shaded area
-    .attr("d", d3.line()
-      .x(function(d) { return x(+d.rating); })
-      .y(function(d) { return y(+d['users rated']); })
-    );
-  svg1.append('path')
-    .attr('id', 'line2019')
-    .data([data2019])
-    .attr("class", "line " + categories[4])
-    .style('stroke', lineArray[4].color)
-    .style('fill', 'none')                // Remove shaded area
-    .attr("d", d3.line()
-      .x(function(d) { return x(+d.rating); })
-      .y(function(d) { return y(+d['users rated']); })
-    );
+
+  let i = 0
+  for (const key in yearsData) {
+    svg1.append('path')
+      .attr('id', 'line' + key)
+      .data([yearsData[key]])
+      .attr("class", "line " + categories[i])
+      // .style('stroke', colorScheme[i])
+      .style('stroke', lineArray[i].color)
+      .style('fill', 'none')                // Remove shaded area
+      .attr("d", d3.line()
+        .x(function(d) { return x(+d.rating); })
+        .y(function(d) { return y(+d['users rated']); })
+      )
+    i++
+  }
 
   svg1.selectAll('myCircles')
     .attr('id', 'circle2015')
-    .data(data2015)
+    .data(yearsData["2015"])
     .enter()
     .append("circle") // Uses the enter().append() method
     .attr('fill', lineArray[0].color)
@@ -152,7 +107,7 @@ d3.csv('average-rating.csv').then(function(data) {
     });
   svg1.selectAll('myCircles')
     .attr('id', 'circle2016')
-    .data(data2016)
+    .data(yearsData["2016"])
     .enter()
     .append("circle") // Uses the enter().append() method
     .attr('fill', lineArray[1].color)
@@ -166,7 +121,7 @@ d3.csv('average-rating.csv').then(function(data) {
     });
   svg1.selectAll('myCircles')
     .attr('id', 'circle2017')
-    .data(data2017)
+    .data(yearsData["2017"])
     .enter()
     .append("circle") // Uses the enter().append() method
     .attr('fill', lineArray[2].color)
@@ -180,7 +135,7 @@ d3.csv('average-rating.csv').then(function(data) {
     });
   svg1.selectAll('myCircles')
     .attr('id', 'circle2018')
-    .data(data2018)
+    .data(yearsData["2018"])
     .enter()
     .append("circle") // Uses the enter().append() method
     .attr('fill', lineArray[3].color)
@@ -194,7 +149,7 @@ d3.csv('average-rating.csv').then(function(data) {
     });
   svg1.selectAll('myCircles')
     .attr('id', 'circle2019')
-    .data(data2019)
+    .data(yearsData["2019"])
     .enter()
     .append("circle") // Uses the enter().append() method
     .attr('fill', lineArray[4].color)
