@@ -95,29 +95,16 @@ d3.csv('average-rating.csv').then(function(data) {
   }
 
   // Add the X axis:
-  const xAxisLines = svgMain.append('g')
+  svgMain.append('g')
     .attr('id', 'x-axis-lines')
     .attr('transform', `translate(${margin}, ${height + margin})`)
     .call(d3.axisBottom(x)) // https://stackoverflow.com/questions/40173533/customize-the-d3-month-or-year-tick-format/40175517
-  xAxisLines.append('text')
-    .attr('class', 'x label')
-    .attr('x', 225)
-    .attr('y', height + 40)
-    .text('Rating');
 
   // Add the Y Axis
-  const yAxisLines = svgMain.append("g")
+  svgMain.append("g")
     .attr('id', 'y-axis-lines')
     .attr('transform', innerTranslation)
     .call(d3.axisLeft(y))
-
-  yAxisLines.append('text')
-    .attr('transform', 'rotate(270)')
-    .attr('class', 'y label')
-    .attr('x', -200)
-    .attr('y', -50)
-    .text('Count');
-
 
   const circlesContainer = svgMain.append('g')
     .attr('id', 'circles')
@@ -155,9 +142,9 @@ d3.csv('average-rating.csv').then(function(data) {
   svgMain.append('g')
     .attr('id', 'credit')
     .append('text')
-    .attr('y', 20)
-    .attr('x', width/2-150)
-    .attr('stroke', 'steelblue')
+    .attr('dy', '2.7em')
+    .attr('x', margin)
+    .attr('fill', 'steelblue')
     .attr('font-size', '15px')
     .attr('font-weight', 'bold')
     .text('GT Username: Yjones7')
@@ -181,6 +168,16 @@ d3.csv('average-rating.csv').then(function(data) {
       .attr("transform", `translate(15,${k * 20})`);
   }
 
+  svgMain.append('text')
+    .attr('x', width / 1.85)
+    .attr('y', height + margin * 1.7)
+    .text('Rating')
+
+  svgMain.append('text')
+    .attr('transform', 'rotate(270)')
+    .attr('x', -220)
+    .attr('y', 13)
+    .text('Count')
 
   function mouseoverHandler(d) {
     let selectedYear = d.year
