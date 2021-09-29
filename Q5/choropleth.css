@@ -1,0 +1,36 @@
+
+.country {
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+.country:hover{
+    opacity: .6;
+}
+.d3-tip {
+    line-height: 1;
+    padding: 12px;
+    background: rgba(43,43,43, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+
+.caption {
+    text-anchor: middle;
+    font-size: 12px;
+    font-weight: bold;
+    color: #000;
+}
+.lgd-marks {
+    text-anchor: start;
+    color: #000;
+}
+h2 {
+    position: absolute;
+    left: 320px;
+    top:  15px;
+}
+#selectButton{
+    position:absolute;
+    top:70px;
+    left:40px;
+}
