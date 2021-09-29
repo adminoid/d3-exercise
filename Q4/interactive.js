@@ -98,7 +98,7 @@ d3.csv('average-rating.csv').then(function(data) {
   svgMain.append('g')
     .attr('id', 'x-axis-lines')
     .attr('transform', `translate(${margin}, ${height + margin})`)
-    .call(d3.axisBottom(x)) // https://stackoverflow.com/questions/40173533/customize-the-d3-month-or-year-tick-format/40175517
+    .call(d3.axisBottom(x))
 
   // Add the Y Axis
   svgMain.append("g")
@@ -121,10 +121,10 @@ d3.csv('average-rating.csv').then(function(data) {
       .attr("cy", d => y(+d['users rated']) + margin)
       .attr("r", 2)
       .on('mouseover', mouseoverHandler)
-      .on('mouseout', function(_) {
-        d3.select(this).attr('r', 2)
-        d3.select('#barchart').remove()
-      })
+      // .on('mouseout', function(_) {
+      //   d3.select(this).attr('r', 2)
+      //   d3.select('#barchart').remove()
+      // })
 
     j++
   }
@@ -179,46 +179,54 @@ d3.csv('average-rating.csv').then(function(data) {
     .attr('y', 13)
     .text('Count')
 
+  let enabled = false
   function mouseoverHandler(d) {
+
+    if (enabled) return
+
     let selectedYear = d.year
     const usersRating = d.rating;
     let q3Data = [], maxRated = []
 
     for (let i = 0; i < data.length; i++) {
       if (Math.floor(parseInt(data[i]['average_rating'])) === usersRating && data[i]['year'] === selectedYear) {
-        if (q3Data && q3Data.length < 5) {
+        // if (q3Data) {
+        if (q3Data.length < 5) {
           q3Data.push(data[i]);
           maxRated.push(parseInt(data[i]['users_rated']))
-        } else if (q3Data
-          && q3Data.length >= 5
-          && parseInt(data[i]['users_rated']) > Math.min(... maxRated)) {
-          let minIndex = maxRated.indexOf(Math.min(... maxRated));
+        } else if (q3Data.length >= 5
+          && parseInt(data[i]['users_rated']) > Math.min(...maxRated)) {
+          let minIndex = maxRated.indexOf(Math.min(...maxRated));
           q3Data[minIndex] = data[i];
           maxRated[minIndex] = parseInt(data[i]['users_rated']);
         }
+        // }
       }
     }
-    function sortData(aList) {                  // sort by descending order
+
+    // sort by descending order
+    function sortData(aList) {
       for (let i = 0; i < aList.length; i++) {
         let key = aList[i],
           j = i - 1;
         while (j >= 0 && parseInt(key['users_rated']) > parseInt(aList[j]['users_rated'])) {
-          aList[j+1] = aList[j];
+          aList[j + 1] = aList[j];
           j--;
         }
-        aList[j+1] = key;
+        aList[j + 1] = key;
       }
     }
+
     sortData(q3Data);
 
     d3.select(this).attr('r', 8);
     let svgBar = d3.select('body')
       .append('svg')
       .attr('id', 'barchart')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('width', width + margin * 2)
+      .attr('height', height + margin * 2)
+      .attr("transform", innerTranslation)
+
     let drawBarchart = function() {
       // drawing barchart:
       let xBarScaleC = d3.scaleLinear().range([0, width]);
@@ -231,16 +239,21 @@ d3.csv('average-rating.csv').then(function(data) {
         ).reverse())
       }
 
-      svgBar.selectAll('.bar')
-        .data(q3Data)
-        .enter()
-        .append('rect')
-        .attr('class', 'bar')
-        .transition()
-        .duration(300)
-        .attr('width', d => xBarScaleC(+d.users_rated))
-        .attr('y', d => yBarScaleC(d.name.slice(0,10)))
-        .attr('height', yBarScaleC.bandwidth())
+      const bars = svgBar.append('g')
+        .attr('id', 'bars')
+        .attr("transform", innerTranslation)
+
+      console.log(q3Data)
+
+      for (let i = 0; i < q3Data.length; i++) {
+        bars.append('rect')
+          .attr('class', 'bar')
+          .transition()
+          .duration(300)
+          .attr('width', _ => xBarScaleC(+q3Data[i].users_rated))
+          .attr('y', _ => yBarScaleC(q3Data[i].name.slice(0,10)))
+          .attr('height', yBarScaleC.bandwidth())
+      }
 
       // gridlines in x axis function
       function make_x_gridlines() {
@@ -285,6 +298,8 @@ d3.csv('average-rating.csv').then(function(data) {
         .text('Games');
     }
     drawBarchart();
+
+    enabled = true
 
   }
 
