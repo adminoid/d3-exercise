@@ -1,5 +1,5 @@
 
-const margin = 50
+const margin = 80
 const width = 800 - margin / 2
 const height = 350 - margin / 2
 const innerTranslation = `translate(${margin},${margin})`
@@ -276,20 +276,23 @@ d3.csv('average-rating.csv').then(function(data) {
         .text('Top 5 Most Rated Games for ' + selectedYear.toString() + ' with Rating ' + usersRating.toString())
 
       // x axis label
-      svgBar.append('text')
-        .attr('class', 'x label')
-        .attr('x', 120)
+      const barXAxisLabel = svgBar.append('g')
+        .attr('id', 'bar_x_axis_label')
+        .attr("transform", innerTranslation)
+      barXAxisLabel.append('text')
+        .attr('x', (width / 2) - margin)
         .attr('y', height + 40)
         .attr('font-weight', 'bold')
         .attr('font-size', '15px')
         .text('Number of Users');
 
       // y axis label
-      svgBar.append('text')
+      const barYAxisLabel = svgBar.append('g')
+        .attr('id', 'bar_y_axis_label')
+      barYAxisLabel.append('text')
         .attr('transform', 'rotate(270)')
-        .attr('class', 'y label')
-        .attr('x', -120)
-        .attr('y', -100)
+        .attr('x', -250)
+        .attr('y', 20)
         .attr('font-weight', 'bold')
         .attr('font-size', '15px')
         .text('Games');
