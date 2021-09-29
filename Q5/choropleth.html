@@ -6,24 +6,21 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Choropleth Map of Board Game Ratings</title>
 	<link rel="stylesheet" href="choropleth.css">
+	<script src="../lib/d3.v5.min.js" defer></script>
+	<script src="../lib/d3-geo-projection.v2.min.js" defer></script>
+	<script src="../lib/d3-tip.min.js" defer></script>
+	<script src="../lib/d3-legend.min.js" defer></script>
+	<script src="../lib/topojson.v2.min.js" defer></script>
+	<script src="./choropleth.js" defer></script>
 </head>
 <body>
 
-<!-- Add heading for the visualization -->
 <h2>Average Rating of Board Games Across the World</h2>
 
-<!-- Dropdown -->
-<select id="selectButton"></select>
-
-<!-- append visualization svg to this div-->
-<div id="choropleth"></div>
-
-<script src="../lib/d3.v5.min.js" defer></script>
-<script src="../lib/d3-geo-projection.v2.min.js" defer></script>
-<script src="../lib/d3-tip.min.js" defer></script>
-<script src="../lib/d3-legend.min.js" defer></script>
-<script src="../lib/topojson.v2.min.js" defer></script>
-<script src="./choropleth.js" defer></script>
+<label for="gameDropdown">
+	Select Board Game:
+</label>
+<select id="gameDropdown"></select>
 
 </body>
 </html>
