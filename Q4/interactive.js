@@ -243,8 +243,6 @@ d3.csv('average-rating.csv').then(function(data) {
         .attr('id', 'bars')
         .attr("transform", innerTranslation)
 
-      console.log(q3Data)
-
       for (let i = 0; i < q3Data.length; i++) {
         bars.append('rect')
           .attr('class', 'bar')
@@ -254,6 +252,39 @@ d3.csv('average-rating.csv').then(function(data) {
           .attr('y', _ => yBarScaleC(q3Data[i].name.slice(0,10)))
           .attr('height', yBarScaleC.bandwidth())
       }
+
+      // Add the x axis:
+      svgBar.append('g')
+        .attr('id', 'x-axis-bars')
+        .attr("transform", `translate(${margin},${height + margin})`)
+        .call(d3.axisBottom(xBarScaleC))
+        .style('font-size', '7px');
+
+      // add the y Axis
+      svgBar.append("g")
+        .attr('id', 'y-axis-bars')
+        .attr("transform", innerTranslation)
+        .call(d3.axisLeft(yBarScaleC));
+
+      // x axis label
+      svgBar.append('text')
+        .attr('class', 'x label')
+        .attr('x', 120)
+        .attr('y', height + 40)
+        .attr('font-weight', 'bold')
+        .attr('font-size', '15px')
+        .text('Number of Users');
+
+      // y axis label
+      svgBar.append('text')
+        .attr('transform', 'rotate(270)')
+        .attr('class', 'y label')
+        .attr('x', -120)
+        .attr('y', -100)
+        .attr('font-weight', 'bold')
+        .attr('font-size', '15px')
+        .text('Games');
+
 
       // gridlines in x axis function
       function make_x_gridlines() {
@@ -273,29 +304,8 @@ d3.csv('average-rating.csv').then(function(data) {
         .attr('x', width/2-150)
         .attr('y', -10)
         .text('Top 5 Most Rated Games for ' + selectedYear.toString() + ' with Rating ' + usersRating.toString());
-      // Add the x axis:
-      svgBar.append('g')
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xBarScaleC))
-        .style('font-size', '7px');
-      svgBar.append('text')
-        .attr('class', 'x label')
-        .attr('x', 120)
-        .attr('y', height + 40)
-        .attr('font-weight', 'bold')
-        .attr('font-size', '15px')
-        .text('Number of Users');
-      // add the y Axis
-      svgBar.append("g")
-        .call(d3.axisLeft(yBarScaleC));
-      svgBar.append('text')
-        .attr('transform', 'rotate(270)')
-        .attr('class', 'y label')
-        .attr('x', -120)
-        .attr('y', -100)
-        .attr('font-weight', 'bold')
-        .attr('font-size', '15px')
-        .text('Games');
+
+
     }
     drawBarchart();
 
