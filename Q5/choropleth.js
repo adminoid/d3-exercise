@@ -34,13 +34,10 @@ const svg = d3.select("body")
 Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv").then(function(data){
   for (let i = 0; i < data.length; i++){
     dataset.push({country:data[i]['Country'], game:data[i]['Game'], users:data[i]["Number of Users"], avg_rating: +data[i]["Average Rating"]}); //+d[i] convert string to integer
-    allGroup.add(data[i].Game); //use for the dropdown list, it is setup as a set, only contain distinct value
+    allGroup.add(data[i]['Game']); //use for the dropdown list, it is setup as a set, only contain distinct value
   }
-  for (
-    let it = allGroup.values(), val= null;
-    val=it.next().value;
-  ) {
-    myArr.push(val); //convert set to array for the usage of the dropdown list
+  for (let val of allGroup.values()) {
+    myArr.push(val)
   }
 })
 ])
@@ -53,7 +50,7 @@ Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv
       .range(colorType);
     // create legend and all the texts
     svg.append("g")
-      .attr("class", "legendQuant")
+      .attr("class", "legendQuantile")
       .attr("transform", "translate(20,320)");
 
     const legend = d3.legendColor()
@@ -63,12 +60,12 @@ Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv
       .title("Average Rating:")
       .scale(color)
 
-    svg.select(".legendQuant")
+    svg.select(".legendQuantile")
       .call(legend);
 
     svg.append("text")
       .attr("transform", "translate(500,510)")
-      .text("Zliu723");
+      .text("Yjones7");
 
     svg.append("text")
       .attr("transform", "translate(-5,-10)")
@@ -88,10 +85,10 @@ Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv
     let country_by_game = []
     function update(selectedGame) {
       country_by_game = dataset.filter(function( d ) {
-        return d.game == selectedGame;
+        return d.game === selectedGame;
       });
       // part 2: start the drawing, use the data "world" from the json file
-      // the drawing is changed whenever the coutnry_by_name[country] matches the world[country]
+      // the drawing is changed whenever the country_by_name[country] matches the world[country]
       svg.append("g")
         .attr("class", "name")
         .selectAll("path")
@@ -101,7 +98,7 @@ Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv
         .style("fill", function(d){
           const ret = "gray"; //initial fill is gray
           for (let i = 0; i < country_by_game.length; i++) {
-            if (d.properties.name == country_by_game[i].country) { //if the "country" from csv matches the "country" from json
+            if (d.properties.name === country_by_game[i].country) { //if the "country" from csv matches the "country" from json
               d.properties["game"] =  country_by_game[i].game //temporary insert the columns from csv to the json, not all for drawing, but for the tip function we define earlier
               d.properties["users"] = country_by_game[i].users
               d.properties['avg_rating'] = country_by_game[i].avg_rating
@@ -120,7 +117,7 @@ Promise.all([d3.json('world_countries.json'), d3.dsv(",","ratings-by-country.csv
     // set up the selectButton.
     // 1.if the option is selected from the list, the selection is returned to const selectedOption
     // 2.run the update function with this selected option
-    d3.select("#selectButton").on("change", function(d) {
+    d3.select("#selectButton").on("change", function() {
       const selectedOption = d3.select(this).property("value") // 1.
       update(selectedOption); // 2.
     })
