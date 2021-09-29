@@ -119,12 +119,12 @@ d3.csv('average-rating.csv').then(function(data) {
       .attr('fill', lineArray[j].color)
       .attr("cx", d => x(d.rating) + margin)
       .attr("cy", d => y(+d['users rated']) + margin)
-      .attr("r", 2)
+      .attr("r", 3)
       .on('mouseover', mouseoverHandler)
-      // .on('mouseout', function(_) {
-      //   d3.select(this).attr('r', 2)
-      //   d3.select('#barchart').remove()
-      // })
+      .on('mouseout', function(_) {
+        d3.select(this).attr('r', 3)
+        // d3.select('#barchart').remove()
+      })
 
     j++
   }
@@ -179,10 +179,9 @@ d3.csv('average-rating.csv').then(function(data) {
     .attr('y', 13)
     .text('Count')
 
-  let enabled = false
   function mouseoverHandler(d) {
 
-    if (enabled) return
+    d3.select('#barchart').remove()
 
     let selectedYear = d.year
     const usersRating = d.rating;
@@ -219,7 +218,7 @@ d3.csv('average-rating.csv').then(function(data) {
 
     sortData(q3Data);
 
-    d3.select(this).attr('r', 8);
+    d3.select(this).attr('r', 5);
     let svgBar = d3.select('body')
       .append('svg')
       .attr('id', 'barchart')
@@ -312,12 +311,9 @@ d3.csv('average-rating.csv').then(function(data) {
           .tickSize(-height)
           .tickFormat(''));
 
-
     }
+
     drawBarchart();
-
-    enabled = true
-
   }
 
 })
