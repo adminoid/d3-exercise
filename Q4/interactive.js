@@ -305,8 +305,8 @@ d3.csv('average-rating.csv').then(function(data) {
       }
       // add the x gridlines
       svgBar.append("g")
-        .attr('class', 'grid')
-        .attr("transform", "translate(0," + height + ")")
+        .attr('id', 'grid')
+        .attr("transform", `translate(${margin},${height + margin})`)
         .attr('stroke-opacity', .2)
         .call(make_x_gridlines()
           .tickSize(-height)
