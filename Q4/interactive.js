@@ -266,6 +266,15 @@ d3.csv('average-rating.csv').then(function(data) {
         .attr("transform", innerTranslation)
         .call(d3.axisLeft(yBarScaleC));
 
+      // Add title to barchart:
+      const barChartTitle = svgBar.append('g')
+        .attr('id', 'bar_chart_title')
+
+      barChartTitle.append('text')
+        .attr('x', margin + 230)
+        .attr('y', margin)
+        .text('Top 5 Most Rated Games for ' + selectedYear.toString() + ' with Rating ' + usersRating.toString())
+
       // x axis label
       svgBar.append('text')
         .attr('class', 'x label')
@@ -299,11 +308,6 @@ d3.csv('average-rating.csv').then(function(data) {
         .call(make_x_gridlines()
           .tickSize(-height)
           .tickFormat(''));
-      // Add title to barchart:
-      svgBar.append('text')
-        .attr('x', width/2-150)
-        .attr('y', -10)
-        .text('Top 5 Most Rated Games for ' + selectedYear.toString() + ' with Rating ' + usersRating.toString());
 
 
     }
